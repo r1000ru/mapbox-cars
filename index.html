@@ -29,6 +29,7 @@
 
     <div id='map'></div>
     <script>
+        /*
         mapboxgl.accessToken = 'pk.eyJ1IjoicjEwMDBydSIsImEiOiJjazBxYTBxOGowNXVrM2NwZWZzMGw2NTVjIn0.RITiFnqDdE736iFkbxfPqA';
         var map = window.map = new mapboxgl.Map({
             container: 'map',
@@ -42,7 +43,7 @@
         // parameters to ensure the model is georeferenced correctly on the map
         var modelOrigin = [37.835, 55.80828];
         var modelAltitude = 0;
-        var modelRotate = [Math.PI / 2, 0, 0];
+        var modelRotate = [Math.PI / 2, Math.PI / 2, 0];
 
         var modelAsMercatorCoordinate = mapboxgl.MercatorCoordinate.fromLngLat(modelOrigin, modelAltitude);
 
@@ -54,9 +55,7 @@
             rotateX: modelRotate[0],
             rotateY: modelRotate[1],
             rotateZ: modelRotate[2],
-            /* Since our 3D model is in real world meters, a scale transform needs to be
-            * applied since the CustomLayerInterface expects units in MercatorCoordinates.
-            */
+
             scale: modelAsMercatorCoordinate.meterInMercatorCoordinateUnits()
         };
 
@@ -128,35 +127,13 @@
                     break;
                 }
             }
-            map.addLayer({
-                'id': '3d-buildings',
-                'source': 'composite',
-                'source-layer': 'building',
-                'filter': ['==', 'extrude', 'true'],
-                'type': 'fill-extrusion',
-                'minzoom': 15,
-                'paint': {
-                    'fill-extrusion-color': '#aaa',
-
-                    // use an 'interpolate' expression to add a smooth transition effect to the
-                    // buildings as the user zooms in
-                    'fill-extrusion-height': [
-                        "interpolate", ["linear"], ["zoom"],
-                        15, 0,
-                        15.05, ["get", "height"]
-                    ],
-                    'fill-extrusion-base': [
-                        "interpolate", ["linear"], ["zoom"],
-                        15, 0,
-                        15.05, ["get", "min_height"]
-                    ],
-                    'fill-extrusion-opacity': .6
-                }
-            }, labelLayerId);
+            
+            console.log(labelLayerId)
             map.addLayer(customLayer, '3d-buildings');
         });
+        */
     </script>
-
+    <script type="module" src="index.js"></script>
 </body>
 
 </html>
