@@ -1,4 +1,10 @@
 import { config } from './config/config.js';
-import { Map } from './map/map.js';
+import { Garage } from './garage/garage.js';
 
-window.app = new Map('map', config.mapbox_token);
+const garage = new Garage('map', config);
+garage.on('ready', ()=>{
+    console.log('ready')
+    garage.add(1, 'mitsubishi', 'lancer', 'yellow');
+});
+
+window.garage = garage;
