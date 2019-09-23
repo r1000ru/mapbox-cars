@@ -95,20 +95,16 @@ Car.prototype.projectToWorld = function(coords){
     return result;
 }
 
-Car.prototype.setCoords = function(coords) {
-    console.log(coords)
-    let vector = this.projectToWorld(coords);
-    console.log(this.getScene(), vector);
-    return;
-    let m = new THREE.Matrix4().makeTranslation(matrix.x, matrix.y, matrix.z)
+Car.prototype.setCoords = function(geo_coords) {
+    let coords = mapboxgl.MercatorCoordinate.fromLngLat(geo_coords);
+    let scale = coords.meterInMercatorCoordinateUnits();
     let scene = this.getScene();
-    if (!scene) {
-        return;
-    }
-    console.log(scene)
-    //scene.matrix.translate(m);
-    //scene.position.x = x;
-    //scene.position.y = y;
+    scene.position.y = coords.y / scale;
+    
+    console.log(scene, coords, scale)
+
+    return;
+    
 }
 
 export { Car };

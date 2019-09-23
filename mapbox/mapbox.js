@@ -7,7 +7,7 @@ const MapBox = function(element, token) {
         container: element,
         style: 'mapbox://styles/mapbox/streets-v11',
         zoom: 0,
-        center: [0, 0],
+        center: [37.551242, 0],
         pitch:  0,
         antialias: true // create the gl context with MSAA antialiasing, so custom layers are antialiased
     });
@@ -20,7 +20,7 @@ const MapBox = function(element, token) {
     });
     this._renderer.autoClear = false;
 
-    this._coords = mapboxgl.MercatorCoordinate.fromLngLat([0,0], 0);
+    this._coords = mapboxgl.MercatorCoordinate.fromLngLat([37.551242,0], 0);
     this._scale = this._coords.meterInMercatorCoordinateUnits();
     
     this._map.on('style.load', () => {
@@ -66,7 +66,6 @@ MapBox.prototype._init = function() {
             let m = new THREE.Matrix4().fromArray(matrix);
 
             let l = new THREE.Matrix4().makeTranslation(this._coords.x, this._coords.y, this._coords.z).scale(new THREE.Vector3(this._scale, -this._scale, this._scale));
-
             this._camera.projectionMatrix = m.multiply(l);
            
             this._renderer.state.reset();
