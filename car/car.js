@@ -1,7 +1,7 @@
 import { Events } from '../events/events.js';
 import { colors } from '../colors/colors.js';
 
-const Car = function(brand, model, color) {
+const Car = function(brand, model, color, scale) {
     this._gltf;
     var loader = new THREE.GLTFLoader();
     
@@ -14,7 +14,7 @@ const Car = function(brand, model, color) {
         this._setLight();
         this.setColor(color || 'blue');
         this.setAngle(0);
-        this.setScale(1);
+        this.setScale(scale || 1);
         this.emit('load', this.getScene());
     }));
 }

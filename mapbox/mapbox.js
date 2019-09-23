@@ -64,6 +64,7 @@ MapBox.prototype._init = function() {
         renderingMode: '3d',
         render: (gl, matrix) =>{
             let m = new THREE.Matrix4().fromArray(matrix);
+
             let l = new THREE.Matrix4().makeTranslation(this._coords.x, this._coords.y, this._coords.z).scale(new THREE.Vector3(this._scale, -this._scale, this._scale));
 
             this._camera.projectionMatrix = m.multiply(l);
@@ -74,7 +75,7 @@ MapBox.prototype._init = function() {
         }
     }, '3d-buildings');
     this._map.on('zoom', ()=>{
-        this.emit('zoom', (this._map.getZoom()));
+        this.emit('zoom', this.getZoom());
     });
 
     this.emit('ready');
@@ -83,6 +84,10 @@ MapBox.prototype._init = function() {
 
 MapBox.prototype.add = function(scene) {
     this._scene.add(scene);
+}
+
+MapBox.prototype.getZoom = function() {
+    return this._map.getZoom();
 }
 
 export { MapBox }
