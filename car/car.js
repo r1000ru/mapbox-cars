@@ -16,7 +16,7 @@ const Car = function(brand, model, color, scale) {
         this.setAngle(0);
         this.setScale(scale || 1);
         this.emit('load', this.getScene());
-        
+        console.log(this);
     }));
 }
 
@@ -33,13 +33,13 @@ Car.prototype._setLight = function() {
         return;
     }
 
-    let directionalLight = new THREE.DirectionalLight(0xffffff);
-    directionalLight.position.set(0, -70, 100).normalize();
-    scene.add(directionalLight);
-
-    let directionalLight2 = new THREE.DirectionalLight(0xffffff);
-    directionalLight2.position.set(0, 70, 100).normalize();
-    scene.add(directionalLight2);
+    let hemiLight = new THREE.HemisphereLight('#aaaaaa');
+    //hemiLight.color.setHSL( 0.6, 1, 0.6 );
+    //hemiLight.groundColor.setHSL( 0.095, 1, 0.75 );
+    hemiLight.position.set( 0, 50, 0 );
+    scene.add( hemiLight );
+    let hemiLightHelper = new THREE.HemisphereLightHelper( hemiLight, 10 );
+    //scene.add( hemiLightHelper );
 }
 
 Car.prototype.getScene = function() {
@@ -77,44 +77,24 @@ Car.prototype.setScale = function(scale) {
 }
 
 
+Car.prototype.degrees2meters = function(coords) {
+    const radius = 20037508.34;
+    let yCoef = Math.log(Math.tan((90 + coords[0]) * Math.PI / 360)) / (Math.PI / 180);
 
-Car.prototype.projectToWorld = function(coords){
-    const WORLD_SIZE = 1024000;
-    const MERCATOR_A = 6378137.0;
-
-    const PROJECTION_WORLD_SIZE = WORLD_SIZE / (MERCATOR_A * Math.PI * 2);
-    const DEG2RAD = Math.PI / 180;
-
-    let projected = [
-        -MERCATOR_A * DEG2RAD * coords[0] * PROJECTION_WORLD_SIZE,
-        -MERCATOR_A * Math.log(Math.tan((Math.PI*0.25) + (0.5 * DEG2RAD * coords[1]) )) * PROJECTION_WORLD_SIZE,
-        0
-    ];
-    
-    let result = new THREE.Vector3(projected[0], projected[1], projected[2]);
-    console.log(result)
-    return result;
+    let x = Math.ceil(coords[1] * radius / 180);
+    let y = Math.ceil(yCoef * radius / 180);
+    return {x: x, y: y}
 }
 
 Car.prototype.setCoords = function(coords) {
-    //let coords = [geo_coords[0] / Math.PI, geo_coords[1] / Math.PI];
-    console.log(coords);
-    //let point = [coords[0] *  6371, 6371 * Math.log(Math.tan(Math.PI / 4 + coords[1]))
-
-    let rLat = coords[1] * Math.PI/180;
-    let rLong = coords[0] * Math.PI/180;
-    let a = 6378137.0;
-    let b = 6356752.3142;
-    let f = (a - b) / a;
-    let e = sqrt( 2 * f - Math.pow(f, 2));
-    let X = a * rLong;
-    let Y = a * Math.log(Math.tan(Math.PI/4 + rLat / 2) * ( (1 - e * Math.sin(rLat)) /  ( 1 + e * Math.sin(rLat) ))^(e / 2) );
-    //scene.position.x = coords.x * 40075000 * scale;
-    //scene.position.y = coords.y * 40075000 * scale;
+    let scene = this.getScene();
+    if (!scene) {
+        return;
+    }
     
-    
-
-    return;
+    let point = this.degrees2meters(coords);
+    console.log(point, scene)
+    scene.position.set(point.x, point.y, 0);
     
 }
 

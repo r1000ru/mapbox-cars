@@ -6,7 +6,7 @@ const MapBox = function(element, token) {
     this._map = new mapboxgl.Map({
         container: element,
         style: 'mapbox://styles/mapbox/streets-v11',
-        zoom: 0,
+        zoom: 18,
         center: [0, 0],
         pitch:  0,
         antialias: true // create the gl context with MSAA antialiasing, so custom layers are antialiased
