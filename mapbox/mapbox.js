@@ -11,8 +11,9 @@ const MapBox = function(element, token) {
         pitch:  0,
         antialias: true // create the gl context with MSAA antialiasing, so custom layers are antialiased
     });
-
-    this._camera = new THREE.Camera();
+// https://github.com/mapbox/mapbox-gl-js/issues/7395
+    this._camera = new THREE.PerspectiveCamera();
+    console.log(this._camera);
     this._scene = new THREE.Scene();
     this._renderer = new THREE.WebGLRenderer({
         canvas: this._map.getCanvas(),
@@ -66,13 +67,14 @@ MapBox.prototype._init = function() {
             let m = new THREE.Matrix4().fromArray(matrix);
 
             let l = new THREE.Matrix4().makeTranslation(this._coords.x, this._coords.y, this._coords.z).scale(new THREE.Vector3(this._scale, -this._scale, this._scale));
+            this._camera.projectionMatrix.elements = matrix;
             this._camera.projectionMatrix = m.multiply(l);
            
             this._renderer.state.reset();
             this._renderer.render(this._scene, this._camera);
             this._map.triggerRepaint();
         }
-    }, '3d-buildings');
+    });
     this._map.on('zoom', ()=>{
         this.emit('zoom', this.getZoom());
     });
