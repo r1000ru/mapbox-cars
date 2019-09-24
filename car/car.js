@@ -16,6 +16,7 @@ const Car = function(brand, model, color, scale) {
         this.setAngle(0);
         this.setScale(scale || 1);
         this.emit('load', this.getScene());
+        
     }));
 }
 
@@ -95,13 +96,23 @@ Car.prototype.projectToWorld = function(coords){
     return result;
 }
 
-Car.prototype.setCoords = function(geo_coords) {
-    let coords = mapboxgl.MercatorCoordinate.fromLngLat(geo_coords);
-    let scale = coords.meterInMercatorCoordinateUnits();
-    let scene = this.getScene();
-    scene.position.y = coords.y / scale;
+Car.prototype.setCoords = function(coords) {
+    //let coords = [geo_coords[0] / Math.PI, geo_coords[1] / Math.PI];
+    console.log(coords);
+    //let point = [coords[0] *  6371, 6371 * Math.log(Math.tan(Math.PI / 4 + coords[1]))
+
+    let rLat = coords[1] * Math.PI/180;
+    let rLong = coords[0] * Math.PI/180;
+    let a = 6378137.0;
+    let b = 6356752.3142;
+    let f = (a - b) / a;
+    let e = sqrt( 2 * f - Math.pow(f, 2));
+    let X = a * rLong;
+    let Y = a * Math.log(Math.tan(Math.PI/4 + rLat / 2) * ( (1 - e * Math.sin(rLat)) /  ( 1 + e * Math.sin(rLat) ))^(e / 2) );
+    //scene.position.x = coords.x * 40075000 * scale;
+    //scene.position.y = coords.y * 40075000 * scale;
     
-    console.log(scene, coords, scale)
+    
 
     return;
     
