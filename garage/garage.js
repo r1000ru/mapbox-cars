@@ -10,6 +10,12 @@ const Garage = function(element, config) {
     this._map.on('zoom', (map_zoom)=>{
         this.setScale(map_zoom);
     });
+    this._map.on('camera_position', (position)=>{
+        console.log(position);
+        this._cars.forEach((car)=>{
+            car.setCameraPosition(position);
+        })
+    })
     this._cars = new Map();
 }
 Garage.prototype.__proto__ = Events.prototype;

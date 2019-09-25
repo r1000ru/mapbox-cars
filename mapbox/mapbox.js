@@ -13,7 +13,7 @@ const MapBox = function(element, token) {
     });
 // https://github.com/mapbox/mapbox-gl-js/issues/7395
     this._camera = new THREE.PerspectiveCamera();
-    console.log(this._camera);
+    
     this._scene = new THREE.Scene();
     this._renderer = new THREE.WebGLRenderer({
         canvas: this._map.getCanvas(),
@@ -21,16 +21,23 @@ const MapBox = function(element, token) {
     });
     this._renderer.autoClear = false;
 
-    this._coords = mapboxgl.MercatorCoordinate.fromLngLat([0 ,0], 0);
-    this._scale = this._coords.meterInMercatorCoordinateUnits();
     
+    console.log(this._coords, this._scale);
     this._map.on('style.load', () => {
         this._init();
+    });
+
+    this._map.on('move', () => {
+        //let coords = this._map.getCenter();
+        //this._coords = mapboxgl.MercatorCoordinate.fromLngLat(coords, 0);
+        //this._scale = this._coords.meterInMercatorCoordinateUnits();
+        //this.emit('coords', coords);
     });
 }
 
 
 MapBox.prototype.__proto__ = Events.prototype;
+
 MapBox.prototype._init = function() {
     // Add 3D building
     this._map.addLayer({
@@ -65,11 +72,10 @@ MapBox.prototype._init = function() {
         renderingMode: '3d',
         render: (gl, matrix) =>{
             let m = new THREE.Matrix4().fromArray(matrix);
-
-            let l = new THREE.Matrix4().makeTranslation(this._coords.x, this._coords.y, this._coords.z).scale(new THREE.Vector3(this._scale, -this._scale, this._scale));
+            let l = {elements: [2.495320233665337e-8,0,0,0,0,-2.495320233665337e-8,0,0,0,0,2.495320233665337e-8,0,0.5,0.5,0,1]};// new THREE.Matrix4().makeTranslation(0.5, 0.5, 0).scale(new THREE.Vector3(2.495320233665337e-8, -2.495320233665337e-8, 2.495320233665337e-8));
             this._camera.projectionMatrix.elements = matrix;
             this._camera.projectionMatrix = m.multiply(l);
-           
+            //this.emit('camera_position', this._camera.position);
             this._renderer.state.reset();
             this._renderer.render(this._scene, this._camera);
             this._map.triggerRepaint();

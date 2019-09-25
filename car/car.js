@@ -2,6 +2,10 @@ import { Events } from '../events/events.js';
 import { colors } from '../colors/colors.js';
 
 const Car = function(brand, model, color, scale) {
+    this._camera = new THREE.PerspectiveCamera(45, 1, 1, 1000);
+    this._coords = mapboxgl.MercatorCoordinate.fromLngLat([0 ,0], 0);
+    this._scale = this._coords.meterInMercatorCoordinateUnits();
+
     this._gltf;
     var loader = new THREE.GLTFLoader();
     
@@ -18,6 +22,16 @@ const Car = function(brand, model, color, scale) {
         this.emit('load', this.getScene());
         console.log(this);
     }));
+
+    this._coords = {
+        lat: 0,
+        lng: 0
+    };
+    this._position_position ={
+        x: 0,
+        y: 0,
+        z: 0
+    };
 }
 
 Car.prototype.__proto__ = Events.prototype;
@@ -79,23 +93,38 @@ Car.prototype.setScale = function(scale) {
 
 Car.prototype.degrees2meters = function(coords) {
     const radius = 20037508.34;
-    let yCoef = Math.log(Math.tan((90 + coords[0]) * Math.PI / 360)) / (Math.PI / 180);
 
-    let x = Math.ceil(coords[1] * radius / 180);
-    let y = Math.ceil(yCoef * radius / 180);
-    return {x: x, y: y}
+    let yCoef = Math.log(Math.tan((90 + coords.lat) * Math.PI / 360)) / (Math.PI / 180);
+
+    let point = {
+        x: Math.ceil(coords.lng * radius / 180),
+        y: Math.ceil(yCoef * radius / 180)
+    }
+    console.log(point)
+    return point;
+}
+
+Car.prototype.setCameraPosition = function(position) {
+    this._camera_position = position;
+    this._setPosition();
 }
 
 Car.prototype.setCoords = function(coords) {
+    this._coords = mapboxgl.MercatorCoordinate.fromLngLat(coords, 0);
+    this._scale = this._coords.meterInMercatorCoordinateUnits();
+    
+}
+
+Car.prototype._setPosition = function() {
+    console.log(this._coords, this._coords_camera)
     let scene = this.getScene();
     if (!scene) {
         return;
     }
     
-    let point = this.degrees2meters(coords);
-    console.log(point, scene)
-    scene.position.set(point.x, point.y, 0);
-    
+    let point = this.degrees2meters(this._coords);
+
+    scene.position.set(point.x , point.y, 0);
 }
 
 export { Car };
