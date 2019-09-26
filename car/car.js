@@ -1,17 +1,11 @@
 import { Events } from '../events/events.js';
 import { colors } from '../colors/colors.js';
 
-const Car = function(brand, model, color, scale) {
-    this._camera = new THREE.PerspectiveCamera(45, 1, 1, 1000);
-    this._coords = mapboxgl.MercatorCoordinate.fromLngLat([0 ,0], 0);
-    this._scale = this._coords.meterInMercatorCoordinateUnits();
-
+const Car = function(brand, model, color, scale, coords) {
+    coords = coords || {lat: 0, lng: 0};
+    
+    let loader = new THREE.GLTFLoader();
     this._gltf;
-    var loader = new THREE.GLTFLoader();
-    
-    
-    this._layer_coords;
-    this._layer_scale;
 
     loader.load(`../car/${brand}/${model}.gltf`, ( (gltf)=> {
         this._gltf = gltf;
@@ -19,27 +13,13 @@ const Car = function(brand, model, color, scale) {
         this.setColor(color || 'blue');
         this.setAngle(0);
         this.setScale(scale || 1);
+        this.setCoords(coords);
+        
         this.emit('load', this.getScene());
-        console.log(this);
     }));
-
-    this._coords = {
-        lat: 0,
-        lng: 0
-    };
-    this._position_position ={
-        x: 0,
-        y: 0,
-        z: 0
-    };
 }
 
 Car.prototype.__proto__ = Events.prototype;
-
-Car.prototype.setLayerCoords = function(coords) {
-    this._layer_coords = coords;
-    this._layer_scale = this._layer_coords.meterInMercatorCoordinateUnits();
-}
 
 Car.prototype._setLight = function() {
     let scene = this.getScene();
@@ -47,9 +27,9 @@ Car.prototype._setLight = function() {
         return;
     }
 
-    let hemiLight = new THREE.HemisphereLight('#aaaaaa');
-    hemiLight.position.set( 0, 50, 0 );
-    scene.add( hemiLight );
+    let light = new THREE.DirectionalLight( 0xFFFFFF );
+    light.position.set( 0, 50, 0 );
+    scene.add( light );
 }
 
 Car.prototype.getScene = function() {

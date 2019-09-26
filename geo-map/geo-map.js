@@ -1,8 +1,9 @@
 import { Events } from '../events/events.js';
 
 const GeoMap = function(element, token) {
-    console.log(element, token)
     mapboxgl.accessToken = token;
+
+    this._ready = false;
 
     this._map = new mapboxgl.Map({
         container: element,
@@ -25,6 +26,8 @@ const GeoMap = function(element, token) {
     
     this._map.on('style.load', () => {
         this._init();
+        this._ready = true;
+        this.emit('ready');
     });
 }
 
@@ -65,27 +68,38 @@ GeoMap.prototype._init = function() {
         renderingMode: '3d',
         render: (gl, matrix) =>{
             let m = new THREE.Matrix4().fromArray(matrix);
-            let l = {elements: [2.495320233665337e-8,0,0,0,0,-2.495320233665337e-8,0,0,0,0,2.495320233665337e-8,0,0.5,0.5,0,1]};// new THREE.Matrix4().makeTranslation(0.5, 0.5, 0).scale(new THREE.Vector3(2.495320233665337e-8, -2.495320233665337e-8, 2.495320233665337e-8));
+            let l = { elements: [2.495320233665337e-8,0,0,0,0,-2.495320233665337e-8,0,0,0,0,2.495320233665337e-8,0,0.5,0.5,0,1] };// new THREE.Matrix4().makeTranslation(0.5, 0.5, 0).scale(new THREE.Vector3(2.495320233665337e-8, -2.495320233665337e-8, 2.495320233665337e-8));
             this._camera.projectionMatrix.elements = matrix;
             this._camera.projectionMatrix = m.multiply(l);
-            //this.emit('camera_position', this._camera.position);
             this._renderer.state.reset();
             this._renderer.render(this._scene, this._camera);
             this._map.triggerRepaint();
         }
     });
+
     this._map.on('zoom', ()=>{
         this.emit('zoom', this.getZoom());
     });
-
-    this.emit('ready');
-
 }
 
+
+GeoMap.prototype.isReady = function() {
+    return this._ready;
+}
+
+/**
+ * Добавление сцены автомобиля на корневую сцену
+ */
 GeoMap.prototype.add = function(scene) {
+    if (!this._ready) {
+        return;
+    }
     this._scene.add(scene);
 }
 
+/**
+ * Получение информации о текущем масштабе карты
+ */
 GeoMap.prototype.getZoom = function() {
     return this._map.getZoom();
 }
