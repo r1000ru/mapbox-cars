@@ -45,13 +45,4 @@ const colors = {
     }
 }
 
-/*
-Parser HEX RGB for NodeJS
-let parse = function(rgb_hex) {
-    let b = Buffer.from(rgb_hex, 'hex');
-    console.log(b, b[0], b[1], b[2]);
-    let rgb = {r: 1/255*b[0], g: 1/255*b[1], b: 1/255*b[2]};
-    return rgb;
-}
-*/
 export {colors}

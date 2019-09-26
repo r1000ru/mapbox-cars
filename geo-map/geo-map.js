@@ -1,6 +1,7 @@
 import { Events } from '../events/events.js';
 
-const MapBox = function(element, token) {
+const GeoMap = function(element, token) {
+    console.log(element, token)
     mapboxgl.accessToken = token;
 
     this._map = new mapboxgl.Map({
@@ -11,7 +12,7 @@ const MapBox = function(element, token) {
         pitch:  0,
         antialias: true // create the gl context with MSAA antialiasing, so custom layers are antialiased
     });
-// https://github.com/mapbox/mapbox-gl-js/issues/7395
+
     this._camera = new THREE.PerspectiveCamera();
     
     this._scene = new THREE.Scene();
@@ -22,23 +23,15 @@ const MapBox = function(element, token) {
     this._renderer.autoClear = false;
 
     
-    console.log(this._coords, this._scale);
     this._map.on('style.load', () => {
         this._init();
-    });
-
-    this._map.on('move', () => {
-        //let coords = this._map.getCenter();
-        //this._coords = mapboxgl.MercatorCoordinate.fromLngLat(coords, 0);
-        //this._scale = this._coords.meterInMercatorCoordinateUnits();
-        //this.emit('coords', coords);
     });
 }
 
 
-MapBox.prototype.__proto__ = Events.prototype;
+GeoMap.prototype.__proto__ = Events.prototype;
 
-MapBox.prototype._init = function() {
+GeoMap.prototype._init = function() {
     // Add 3D building
     this._map.addLayer({
         'id': '3d-buildings',
@@ -89,12 +82,12 @@ MapBox.prototype._init = function() {
 
 }
 
-MapBox.prototype.add = function(scene) {
+GeoMap.prototype.add = function(scene) {
     this._scene.add(scene);
 }
 
-MapBox.prototype.getZoom = function() {
+GeoMap.prototype.getZoom = function() {
     return this._map.getZoom();
 }
 
-export { MapBox }
+export { GeoMap }
