@@ -15,19 +15,20 @@ const GeoMap = function(element, token) {
     });
 
     this._camera = new THREE.PerspectiveCamera();
-    
     this._scene = new THREE.Scene();
+
     this._renderer = new THREE.WebGLRenderer({
         canvas: this._map.getCanvas(),
         antialias: true
     });
+
     this._renderer.autoClear = false;
 
     
     this._map.on('style.load', () => {
         this._init();
         this._ready = true;
-        this.emit('ready');
+        this.emit('ready', this.getZoom());
     });
 }
 
@@ -68,9 +69,12 @@ GeoMap.prototype._init = function() {
         renderingMode: '3d',
         render: (gl, matrix) =>{
             let m = new THREE.Matrix4().fromArray(matrix);
-            let l = { elements: [2.495320233665337e-8,0,0,0,0,-2.495320233665337e-8,0,0,0,0,2.495320233665337e-8,0,0.5,0.5,0,1] };// new THREE.Matrix4().makeTranslation(0.5, 0.5, 0).scale(new THREE.Vector3(2.495320233665337e-8, -2.495320233665337e-8, 2.495320233665337e-8));
+            // let l = new THREE.Matrix4().makeTranslation(0.5, 0.5, 0).scale(new THREE.Vector3(2.495320233665337e-8, -2.495320233665337e-8, 2.495320233665337e-8));
+            let l = { elements: [2.495320233665337e-8,0,0,0,0,-2.495320233665337e-8,0,0,0,0,2.495320233665337e-8,0,0.5,0.5,0,1] };
+            
             this._camera.projectionMatrix.elements = matrix;
             this._camera.projectionMatrix = m.multiply(l);
+            //console.log(matrix);
             this._renderer.state.reset();
             this._renderer.render(this._scene, this._camera);
             this._map.triggerRepaint();
