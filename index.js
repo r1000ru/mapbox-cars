@@ -1,5 +1,27 @@
 import { config } from './config/config.js';
-import { App } from './app/app.js';
+import { Dozor3D } from './dozor3d/dozor3d.js';
 
-window.app = new App('geomap', config);
+const passport = new tec.passport.App({
+    demo: false,
+    autoclose: true,
+    multiprofiles: true
+});
+
+
+
+
+
+passport.on('login', (session) => {
+    window.dozor3d = new Dozor3D(config, session);
+    window.dozor3d.on('logout', () => {
+        passport.logout();
+        document.location.href = '/';
+    });
+});
+
+passport.on('logout', (e)=>{
+    passport.login();
+});
+
+passport.run();
 

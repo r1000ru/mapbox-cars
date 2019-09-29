@@ -1,12 +1,12 @@
-import { Events } from '../events/events.js';
-import { colors } from '../colors/colors.js';
-import { CarLayer} from '../car-layer/car-layer.js';
+import { Events } from '../../../../events/events.js';
+import { colors } from './colors/colors.js';
+import { Model3DLayer} from './model3d-layer/model3d-layer.js';
 
-const Car = function (device_id, brand, model, color, scale, coords) {
+const Model3D = function (device_id, brand, model, color, scale, coords) {
     this._device_id = device_id;
     this._coords = coords || { lat: 0, lng: 0 };
 
-    this._layer = new CarLayer(this._device_id);
+    this._layer = new Model3DLayer(this._device_id);
     this._gltf;
     this._renderer;
 
@@ -28,10 +28,10 @@ const Car = function (device_id, brand, model, color, scale, coords) {
 
 }
 
-Car.prototype.__proto__ = Events.prototype;
+Model3D.prototype.__proto__ = Events.prototype;
 
 
-Car.prototype.getScene = function () {
+Model3D.prototype.getScene = function () {
     if (!this._gltf) {
         return;
     }
@@ -39,7 +39,7 @@ Car.prototype.getScene = function () {
     return this._gltf.scene;
 }
 
-Car.prototype._setLight = function () {
+Model3D.prototype._setLight = function () {
     let scene = this.getScene();
     if (!scene) {
         return;
@@ -50,7 +50,7 @@ Car.prototype._setLight = function () {
     scene.add(light);
 }
 
-Car.prototype.setColor = function (color) {
+Model3D.prototype.setColor = function (color) {
     let scene = this.getScene();
     if (!scene) {
         return;
@@ -59,7 +59,7 @@ Car.prototype.setColor = function (color) {
     scene.children[42].children[0].material.color = rgb;
 }
 
-Car.prototype.setAngle = function (rad) {
+Model3D.prototype.setAngle = function (rad) {
     let scene = this.getScene();
     if (!scene) {
         return;
@@ -85,7 +85,7 @@ Car.prototype.degrees2meters = function (coords, alt) {
 */
 
 
-Car.prototype.setCoords = function (coords, altitude) {
+Model3D.prototype.setCoords = function (coords, altitude) {
     if (!this._layer) {
         return;
     }
@@ -106,4 +106,4 @@ Car.prototype.setCoords = function (coords, altitude) {
     this._layer.setModelTransform(modelTransform);
 }
 
-export { Car };
+export { Model3D };

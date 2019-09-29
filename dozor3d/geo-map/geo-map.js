@@ -1,7 +1,7 @@
-import { Events } from '../events/events.js';
+import { Events } from '../../events/events.js';
 
-const GeoMap = function(element, token) {
-    mapboxgl.accessToken = token;
+const GeoMap = function(element, config) {
+    mapboxgl.accessToken = config.mapbox_token;
     this._car_layers = new Set();
     this._ready = false;
 

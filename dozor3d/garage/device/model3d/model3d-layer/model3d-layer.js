@@ -1,4 +1,4 @@
-const CarLayer = function(device_id) {
+const Model3DLayer = function(device_id) {
     this.id = `car-3d-${device_id}`;
     this.type = 'custom';
     this.renderingMode = '3d';
@@ -12,7 +12,7 @@ const CarLayer = function(device_id) {
     this._map;
 }
 
-CarLayer.prototype.onAdd = function(map, gl) {
+Model3DLayer.prototype.onAdd = function(map, gl) {
     this._renderer = new THREE.WebGLRenderer({
         canvas: map.getCanvas(),
         context: gl,
@@ -22,9 +22,9 @@ CarLayer.prototype.onAdd = function(map, gl) {
     this._map = map;
 }
 
-CarLayer.prototype.setCoords
+Model3DLayer.prototype.setCoords
 
-CarLayer.prototype.render = function(gl, matrix) {
+Model3DLayer.prototype.render = function(gl, matrix) {
     if (!this._modelTransform) {
         return;
     }
@@ -43,12 +43,12 @@ CarLayer.prototype.render = function(gl, matrix) {
     this._map.triggerRepaint();
 }
 
-CarLayer.prototype.setModelScene = function(scene) {
+Model3DLayer.prototype.setModelScene = function(scene) {
     this._model_scene = scene;
     this._scene.add(this._model_scene);
 }
 
-CarLayer.prototype.setScale = function(zoom) {
+Model3DLayer.prototype.setScale = function(zoom) {
     if (!this._model_scene) {
         return;
     }
@@ -60,8 +60,8 @@ CarLayer.prototype.setScale = function(zoom) {
     this._model_scene.scale.set(scale, scale, scale);
 }
 
-CarLayer.prototype.setModelTransform = function(modelTransform) {
+Model3DLayer.prototype.setModelTransform = function(modelTransform) {
     this._modelTransform = modelTransform;
 }
 
-export { CarLayer }
+export { Model3DLayer }
