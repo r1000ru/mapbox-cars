@@ -3,7 +3,6 @@ import { Car } from '../car/car.js';
 
 const Garage = function() {
     this._cars = new Map();
-    this._zoom = 1;
 }
 
 Garage.prototype.__proto__ = Events.prototype;
@@ -18,10 +17,10 @@ Garage.prototype.add = function(device_id, brand, model, color, coords) {
 
     let scale = this._calcScale();
     
-    let car = new Car(brand, model, color, scale, coords);
+    let car = new Car(device_id, brand, model, color, scale, coords);
     
-    car.on('load', (scene) => {
-        this.emit('add', scene);
+    car.on('layer', (layer) => {
+        this.emit('add', device_id, layer);
     })
 
     this._cars.set(device_id, car);
